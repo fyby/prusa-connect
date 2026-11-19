@@ -65,9 +65,11 @@ func run(args []string) int {
 	flags.StringVar(&options.Examples, "examples", "",
 		"where the packed example module releases are, defaulting to bin/demo-modules, which `make demo` writes")
 	flags.IntVar(&options.Printers, "printers", 0, "how many printers dial in, defaulting to 3")
-	flags.Func("models", "a comma-separated list of the printer models the fleet is drawn from, such as CoreOne_INDX, defaulting to CoreOne,MK4S,XL",
+	flags.Func("models",
+		"a comma-separated list of the printer models the fleet is drawn from, such as CoreOne_INDX, "+
+			"defaulting to CoreOne,MK4S,XL",
 		func(value string) error {
-			for _, model := range strings.Split(value, ",") {
+			for model := range strings.SplitSeq(value, ",") {
 				if model = strings.TrimSpace(model); model != "" {
 					options.Models = append(options.Models, model)
 				}
