@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -64,6 +65,16 @@ func run(args []string) int {
 	flags.StringVar(&options.Examples, "examples", "",
 		"where the packed example module releases are, defaulting to bin/demo-modules, which `make demo` writes")
 	flags.IntVar(&options.Printers, "printers", 0, "how many printers dial in, defaulting to 3")
+	flags.Func("models", "a comma-separated list of the printer models the fleet is drawn from, such as CoreOne_INDX, defaulting to CoreOne,MK4S,XL",
+		func(value string) error {
+			for _, model := range strings.Split(value, ",") {
+				if model = strings.TrimSpace(model); model != "" {
+					options.Models = append(options.Models, model)
+				}
+			}
+
+			return nil
+		})
 	flags.DurationVar(&options.Flap, "flap", flapDefault,
 		"how often one printer goes away and comes back, zero to keep the whole fleet connected")
 	flags.DurationVar(&options.PrintGap, "print-gap", 0,
