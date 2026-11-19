@@ -658,10 +658,10 @@ func (f *demoFleet) banner(
 
 	lines = append(lines,
 		"",
-		"Sign in as the demo account. Its password is new on every run:",
+		f.passwordNote(),
 		"",
 		"  username  "+f.login.username,
-		"  password  "+f.login.password,
+		"  password  "+f.login.shown().password,
 		"  "+owned,
 		"",
 		"Open these while this command keeps running:",
@@ -702,13 +702,22 @@ const jsonHeader = "-H 'content-type: application/json'"
 // browser with no session, and this line gives the browser one.
 func (f *demoFleet) browserLogin() string {
 	return `fetch("/api/v1/auth/login", {method: "POST", headers: {"content-type": "application/json"}, ` +
-		"body: '" + f.login.body() + "'})"
+		"body: '" + f.login.shown().body() + "'})"
+}
+
+// passwordNote says where the demo account's password comes from.
+func (f *demoFleet) passwordNote() string {
+	if f.login.hidden {
+		return "Sign in as the demo account, with the password the -password-file file holds:"
+	}
+
+	return "Sign in as the demo account. Its password is new on every run:"
 }
 
 // curlLogin is the login as a terminal makes it, with the cookie kept.
 func (f *demoFleet) curlLogin(base string) string {
 	return "curl -s -c cookies.txt -X POST " + base + "/api/v1/auth/login " + jsonHeader +
-		" -d '" + f.login.body() + "'"
+		" -d '" + f.login.shown().body() + "'"
 }
 
 // curlMint mints a token over the session that login kept.

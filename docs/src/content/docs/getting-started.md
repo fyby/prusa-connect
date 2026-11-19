@@ -202,6 +202,7 @@ make demo DEMO_ARGS="-printers 8 -flap 0"
 | flag | default | does |
 |---|---|---|
 | `-printers` | `3` | how many xBuddy printers dial in. The Klipper machine is there as well |
+| `-models` | `CoreOne,MK4S,XL` | a comma-separated list of the printer models the xBuddy fleet is drawn from, such as `CoreOne_INDX` |
 | `-addr` | `127.0.0.1:8080` | the address the core binds and the printers dial |
 | `-flap` | `1m` | how often one printer goes away and comes back, `0` to keep the fleet connected |
 | `-cameras` | `true` | start a simulated camera for each printer and declare it against that printer |
@@ -213,6 +214,7 @@ make demo DEMO_ARGS="-printers 8 -flap 0"
 | `-config` | `config/config.yaml` | the file the demo lays its own settings over, ignored when there is none |
 | `-examples` | `bin/demo-modules` | where the packed example module and extension releases are, which `make demo` writes |
 | `-password` | a new one each run | the demo account's password, at least eight bytes |
+| `-password-file` | none | a file holding the demo account's password, kept out of the process list and the banner |
 
 The xBuddy models cycle through CoreOne, MK4S and MINI, so
 `GET /api/v1/devices` shows three different capability sets beside the

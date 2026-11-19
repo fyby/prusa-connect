@@ -110,6 +110,21 @@ func randomPassword() (string, error) {
 type demoLogin struct {
 	username string
 	password string
+	// hidden is a password the banner names by where it came from instead
+	// of printing it.
+	hidden bool
+}
+
+// hiddenPassword is what the banner prints in place of a hidden password.
+const hiddenPassword = "<the password in the -password-file file>"
+
+// shown is the login as the banner prints it.
+func (l demoLogin) shown() demoLogin {
+	if l.hidden {
+		l.password = hiddenPassword
+	}
+
+	return l
 }
 
 // body is the JSON both login paths take.

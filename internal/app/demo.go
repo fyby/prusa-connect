@@ -49,6 +49,9 @@ type DemoOptions struct {
 	Marketplace string
 	// Password is the demo account's. Empty is a new one on every run.
 	Password string
+	// HidePassword keeps Password out of the banner, for a password read from
+	// a file: the file is where it lives, and the banner ends up in a journal.
+	HidePassword bool
 	// Printers is how many printers dial in.
 	Printers int
 	// Models are the printer models the fleet is drawn from, in order, cycled
@@ -206,7 +209,7 @@ func Demo(ctx context.Context, opts DemoOptions) error {
 		return err
 	}
 
-	fleet.login = demoLogin{username: demoUsername, password: password}
+	fleet.login = demoLogin{username: demoUsername, password: password, hidden: opts.HidePassword}
 	fleet.offered = len(local)
 
 	if found {

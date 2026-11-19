@@ -93,8 +93,29 @@ func run(args []string) int {
 	flags.StringVar(&options.Password, "password", "",
 		"the demo account's password, at least eight bytes, defaulting to a new one printed on every run")
 
+	passwordFile := flags.String("password-file", "",
+		"a file holding the demo account's password, which then stays out of the process list and the banner")
+
 	if err := flags.Parse(args); err != nil {
 		return exitUsage
+	}
+
+	if *passwordFile != "" {
+		if options.Password != "" {
+			fmt.Fprintln(os.Stderr, "demo: -password and -password-file cannot both be set")
+
+			return exitUsage
+		}
+
+		password, err := readPasswordFile(*passwordFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "demo: "+err.Error())
+
+			return exitUsage
+		}
+
+		options.Password = password
+		options.HidePassword = true
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -113,4 +134,20 @@ func run(args []string) int {
 	}
 
 	return exitOK
+}
+
+// readPasswordFile reads the password a file holds. The line ending an editor
+// leaves after it is not part of the password.
+func readPasswordFile(path string) (string, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("read the password file: %w", err)
+	}
+
+	password := strings.TrimRight(string(raw), "\r\n")
+	if password == "" {
+		return "", fmt.Errorf("the password file %s is empty", path)
+	}
+
+	return password, nil
 }
